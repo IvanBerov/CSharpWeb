@@ -31,7 +31,8 @@ namespace SoftUniHttpServer
 
             WriteResponse(networkStream, "Hello from the server!");
 
-            connection.Close();
+            //????????????
+            //connection.Close(); 
         }
 
         private void WriteResponse(NetworkStream networkStream, string message)
