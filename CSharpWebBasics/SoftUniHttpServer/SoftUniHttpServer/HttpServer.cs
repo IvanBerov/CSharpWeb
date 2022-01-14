@@ -26,13 +26,19 @@ namespace SoftUniHttpServer
             Console.WriteLine($"Server is listening on port {port}...");
             Console.WriteLine("Listening for request...");
 
-            var connection = serverListener.AcceptTcpClient();
-            var networkStream = connection.GetStream();
+            while (true)
+            {
+                var connection = serverListener.AcceptTcpClient();
+                var networkStream = connection.GetStream();
+                string request = ReadRequest(networkStream);
+                Console.WriteLine(request);
 
-            WriteResponse(networkStream, "Hello from the server!");
+                WriteResponse(networkStream, "Hello from the server!");
 
-            //????????????
-            //connection.Close(); 
+                //????????????
+                //connection.Close();
+            }
+             
         }
 
         private void WriteResponse(NetworkStream networkStream, string message)
@@ -49,6 +55,31 @@ Content-Length: {contenLength}
 
             networkStream.Write(responseBytes, 0, responseBytes.Length);
             //networkStream.Write(responseBytes);
+        }
+
+        private string ReadRequest(NetworkStream networkStream)
+        {
+            var bufferLength = 1024;
+            var buffer = new byte[bufferLength];
+            var totalBytes = 0;
+
+            var requesStringBuilder = new StringBuilder();
+
+            do
+            {
+                var bytesRead = networkStream.Read(buffer, 0, bufferLength);
+                totalBytes += bytesRead;
+
+                if (totalBytes > 10 * 1024)
+                {
+                    throw new InvalidOperationException("Request is too large.");
+                }
+
+                requesStringBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+            }
+            while (networkStream.DataAvailable); //May not run correctly over the Internet
+
+            return requesStringBuilder.ToString();
         }
     }
 }
