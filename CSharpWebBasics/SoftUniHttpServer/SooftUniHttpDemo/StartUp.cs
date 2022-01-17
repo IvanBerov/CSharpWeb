@@ -1,5 +1,6 @@
 ﻿using SoftUniHttpServer;
 using SoftUniHttpServer.HTTP;
+using SoftUniHttpServer.Responses;
 
 public class StartUp
 {
@@ -9,13 +10,14 @@ public class StartUp
                <input type='submit' value ='Save' />
             </form>";
 
-    public static void main()
-    => new HttpServer(routes => routes
-     .MapGet("/", new TextResponse("Hallo from the server!"))
-     .MapGet("/Redirect", new RedirectResponse("hhtp://softuni.org/"))
-     .MapGet("/HTML", new HtmlResponse(StartUp.HtmlForm))
-     .MapPost("/HTML", TextResponse("", StartUp.AddFormDataAction)))
-    .Start();
+    public static void Main(string[] args)
+        => new HttpServer(routes => routes
+        .MapGet("/", new TextResponse("Hello from the server."))
+        .MapGet("/Redirect", new RedirectResponse("https://softuni.bg"))
+        .MapGet("/HTML", new HtmlResponse(StartUp.HtmlForm))
+        .MapPost("/HTML", new TextResponse("", StartUp.AddFormDataAction)))
+        .Start();
+
 
     private static void AddFormDataAction(Request request, Response response)
     {
@@ -28,5 +30,3 @@ public class StartUp
         }
     }
 }
-
-

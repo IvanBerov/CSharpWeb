@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using SoftUniHttpServer.HTTP;
+using SoftUniHttpServer.Routing;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 namespace SoftUniHttpServer
@@ -9,18 +11,36 @@ namespace SoftUniHttpServer
         private readonly int port;
         private readonly TcpListener serverListener;
 
+        private readonly RoutingTable routingTable;
 
-        public HttpServer(string _ipAddress, int _port)
+
+        public HttpServer(string _ipAddress, int _port, Action<IRoutingTable> routingTableConfiguration)
         {
             ipAddress = IPAddress.Parse(_ipAddress);
             port = _port;
 
             serverListener = new TcpListener(ipAddress, port);
+
+            routingTableConfiguration(this.routingTable = new RoutingTable());
+        }
+
+        //Add two more constructor methods, which use our current one.
+        //The reason to do this is to have a default IP address and port,
+        //so that they should not be given every time.
+
+        public HttpServer(int port, Action<IRoutingTable> routingTable)
+            :this("127.0.0.1", port, routingTable)
+        {
+        }
+
+        public HttpServer(Action<IRoutingTable> routingTable) 
+            : this(8080, routingTable)
+        {
         }
 
         public void Start() 
         {
-            serverListener.Start();
+            this.serverListener.Start();
 
             Console.WriteLine($"Server is listening on port {port}...");
             Console.WriteLine("Listening for request...");
@@ -29,31 +49,32 @@ namespace SoftUniHttpServer
             {
                 var connection = serverListener.AcceptTcpClient();
                 var networkStream = connection.GetStream();
-                string request = ReadRequest(networkStream);
-                Console.WriteLine(request);
+                string requestText = ReadRequest(networkStream);
 
-                WriteResponse(networkStream, "Hello from the server!");
+                Console.WriteLine(requestText);
 
-                //????????????
-                //connection.Close();
+                var request = Request.Parse(requestText);
+
+                var response = this.routingTable.MatchRequest(request);
+
+                if (response.PreRenderAction != null)
+                {
+                    response.PreRenderAction(request, response);
+                }
+
+                WriteResponse(networkStream, response);
+
+                connection.Close();
             }
              
         }
 
-        private void WriteResponse(NetworkStream networkStream, string message)
+        private void WriteResponse(NetworkStream networkStream, Response response)
         {
-            var contenLength = Encoding.UTF8.GetByteCount(message);
+            var responseBytes = Encoding.UTF8.GetBytes(response.ToString());
 
-            string response = $@"HTTP/1.1 200 OK
-Content-Type: text/plain; charset=UTF-8
-Content-Length: {contenLength}
-
-{message}";
-
-            var responseBytes = Encoding.UTF8.GetBytes(response);
-
-            networkStream.Write(responseBytes, 0, responseBytes.Length);
-            //networkStream.Write(responseBytes);
+            //networkStream.Write(responseBytes, 0, responseBytes.Length);
+            networkStream.Write(responseBytes);
         }
 
         private string ReadRequest(NetworkStream networkStream)
@@ -62,7 +83,7 @@ Content-Length: {contenLength}
             var buffer = new byte[bufferLength];
             var totalBytes = 0;
 
-            var requesStringBuilder = new StringBuilder();
+            var requesSb = new StringBuilder();
 
             do
             {
@@ -74,11 +95,11 @@ Content-Length: {contenLength}
                     throw new InvalidOperationException("Request is too large.");
                 }
 
-                requesStringBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+                requesSb.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
             }
             while (networkStream.DataAvailable); //May not run correctly over the Internet
 
-            return requesStringBuilder.ToString();
+            return requesSb.ToString();
         }
     }
 }
