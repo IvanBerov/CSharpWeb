@@ -1,6 +1,8 @@
-﻿namespace SoftUniHttpServer.HTTP
+﻿using System.Collections;
+
+namespace SoftUniHttpServer.HTTP
 {
-    public class HeaderCollection
+    public class HeaderCollection : IEnumerable<Header>
     {
         private readonly Dictionary<string, Header> headers;
 
@@ -15,5 +17,9 @@
         {
             headers.Add(name, new Header(name, value));
         }
+
+        public IEnumerator<Header> GetEnumerator() => this.headers.Values.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator(); 
     }
 }
