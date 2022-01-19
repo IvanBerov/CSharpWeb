@@ -18,7 +18,6 @@ public class StartUp
         .MapPost("/HTML", new TextResponse("", StartUp.AddFormDataAction)))
         .Start();
 
-
     private static void AddFormDataAction(Request request, Response response)
     {
         response.Body = "";

@@ -17,6 +17,7 @@ namespace SoftUniHttpServer
         public HttpServer(string _ipAddress, int _port, Action<IRoutingTable> routingTableConfiguration)
         {
             ipAddress = IPAddress.Parse(_ipAddress);
+
             port = _port;
 
             serverListener = new TcpListener(ipAddress, port);
@@ -66,7 +67,6 @@ namespace SoftUniHttpServer
 
                 connection.Close();
             }
-             
         }
 
         private void WriteResponse(NetworkStream networkStream, Response response)

@@ -1,16 +1,11 @@
 ﻿using SoftUniHttpServer.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SoftUniHttpServer.HTTP
 {
     public class ContentResponse : Response
     {
-        public ContentResponse(string content, string contentType,
-            Action<Request, Response> preRenderAction = null) 
+        public ContentResponse(string content, string contentType, Action<Request, Response> preRenderAction = null) 
             : base(StatusCode.OK)
         {
             Guard.AgainstNull(content);
@@ -26,6 +21,7 @@ namespace SoftUniHttpServer.HTTP
             if (this.Body != null)
             {
                 var contentLength = Encoding.UTF8.GetByteCount(this.Body).ToString();
+
                 this.Headers.Add(Header.ContentLength, contentLength);
             }
 

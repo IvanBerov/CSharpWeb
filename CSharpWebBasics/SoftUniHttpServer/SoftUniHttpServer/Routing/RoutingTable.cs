@@ -10,17 +10,17 @@ namespace SoftUniHttpServer.Routing
 
         public RoutingTable() => this.routes = new()
         {
-            [Method.GET] = new(),
-            [Method.POST] = new(),
-            [Method.PUT] = new(),
-            [Method.DELETE] = new()
+            [Method.Get] = new(),
+            [Method.Post] = new(),
+            [Method.Put] = new(),
+            [Method.Delete] = new()
         };
 
         public IRoutingTable Map(string url, Method method, Response response)
             => method switch
             {
-                Method.GET => this.MapGet(url, response),
-                Method.POST => this.MapPost(url, response),
+                Method.Get => this.MapGet(url, response),
+                Method.Post => this.MapPost(url, response),
                 _ => throw new InvalidOperationException($"Method '{method}' is not supported.")
             };
 
@@ -29,7 +29,7 @@ namespace SoftUniHttpServer.Routing
             Guard.AgainstNull(url, nameof(url));
             Guard.AgainstNull(response, nameof(response));
 
-            this.routes[Method.GET][url] = response;
+            this.routes[Method.Get][url] = response;
 
             return this;
         }
@@ -39,7 +39,7 @@ namespace SoftUniHttpServer.Routing
             Guard.AgainstNull(url, nameof(url));
             Guard.AgainstNull(response, nameof(response));
 
-            this.routes[Method.POST][url] = response;
+            this.routes[Method.Post][url] = response;
 
             return this;
         }

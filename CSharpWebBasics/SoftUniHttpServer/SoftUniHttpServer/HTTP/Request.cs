@@ -69,7 +69,6 @@ namespace SoftUniHttpServer.HTTP
                     part => part[1],
                     StringComparer.InvariantCultureIgnoreCase);
 
-
         private static HeaderCollection ParseHeaders(IEnumerable<string> headerlines)
         {
             var headers = new HeaderCollection();
@@ -105,7 +104,6 @@ namespace SoftUniHttpServer.HTTP
             }
             catch (Exception)
             {
-
                 throw new InvalidOperationException($"Method '{method}' is not supported");
             }
         }
