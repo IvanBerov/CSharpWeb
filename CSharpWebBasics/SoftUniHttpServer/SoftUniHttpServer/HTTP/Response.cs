@@ -8,13 +8,15 @@ namespace SoftUniHttpServer.HTTP
         {
             StatusCode = statusCode;
 
-            Headers.Add(Header.Server, "My Web SoftUni Server");
+            Headers.Add(Header.Server, "My Web Server");
             Headers.Add(Header.Date, $"{DateTime.UtcNow:r}");
         }
 
         public StatusCode StatusCode { get; init; }
 
         public HeaderCollection Headers { get; } = new HeaderCollection();
+
+        public CookieCollection Cookies { get; } = new CookieCollection();
 
         public string Body { get; set; }
 
@@ -29,6 +31,11 @@ namespace SoftUniHttpServer.HTTP
             foreach (var header in this.Headers)
             {
                 result.AppendLine(header.ToString());
+            }
+
+            foreach (var cookie in this.Cookies)
+            {
+                result.AppendLine($"{Header.SetCookie}: {cookie}");
             }
 
             result.AppendLine();

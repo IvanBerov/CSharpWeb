@@ -1,7 +1,8 @@
 ﻿using SoftUniHttpServer.Common;
+using SoftUniHttpServer.HTTP;
 using System.Text;
 
-namespace SoftUniHttpServer.HTTP
+namespace SoftUniHttpServer.Responses
 {
     public class ContentResponse : Response
     {
@@ -12,7 +13,9 @@ namespace SoftUniHttpServer.HTTP
             Guard.AgainstNull(contentType);
 
             this.PreRenderAction = preRenderAction;
+
             this.Headers.Add(Header.ContentType, contentType);
+
             this.Body = content;
         }
 
@@ -21,8 +24,7 @@ namespace SoftUniHttpServer.HTTP
             if (this.Body != null)
             {
                 var contentLength = Encoding.UTF8.GetByteCount(this.Body).ToString();
-
-                this.Headers.Add(Header.ContentLength, contentLength);
+                this.Headers.Add(Header.ContentLength, contentLength); //?
             }
 
             return base.ToString();
