@@ -68,6 +68,8 @@ namespace SoftUniHttpServer
                         response.PreRenderAction(request, response);
                     }
 
+                    AddSession(request, response);
+
                     await WriteResponse(networkStream, response);
 
                     connection.Close();
@@ -87,6 +89,7 @@ namespace SoftUniHttpServer
         {
             var bufferLength = 1024;
             var buffer = new byte[bufferLength];
+
             var totalBytes = 0;
 
             var requesSb = new StringBuilder();
@@ -107,6 +110,18 @@ namespace SoftUniHttpServer
             while (networkStream.DataAvailable); //May not run correctly over the Internet
 
             return requesSb.ToString();
+        }
+
+        private static void AddSession(Request request, Response response)
+        {
+            var sessionExists = request.Session.ContainsKey(Session.SessionCurrentDateKey);
+
+            if (!sessionExists)
+            {
+                request.Session[Session.SessionCurrentDateKey] = DateTime.Now.ToString();
+
+                response.Cookies.Add(Session.SessionCookieName, request.Session.Id);
+            }
         }
     }
 }

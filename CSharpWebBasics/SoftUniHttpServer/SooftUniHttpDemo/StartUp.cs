@@ -28,7 +28,7 @@ public class StartUp
 
     private const string Password = "user123";
 
-    public static async Task Main(string[] args)
+    public static async Task Main()
     {
         await DownloadSitesAsTextFile
             (StartUp.FileName, new string[] { "https://judge.softuni.org/", "https://softuni.bg/" });
