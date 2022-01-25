@@ -13,12 +13,12 @@ namespace BasicWebServer.Server
         private readonly IPAddress ipAddress;
         private readonly int port;
         private readonly TcpListener serverListener;
-
         private readonly RoutingTable routingTable;
 
         public HttpServer(string ipAddress, int port, Action<IRoutingTable> routingTableConfiguration)
         {
             this.ipAddress = IPAddress.Parse(ipAddress);
+
             this.port = port;
 
             this.serverListener = new TcpListener(this.ipAddress, port);
@@ -75,6 +75,7 @@ namespace BasicWebServer.Server
         private async Task<string> ReadRequest(NetworkStream networkStream)
         {
             var bufferLength = 1024;
+
             var buffer = new byte[bufferLength];
 
             var totalBytes = 0;
@@ -113,6 +114,7 @@ namespace BasicWebServer.Server
             if (!sessionExists)
             {
                 request.Session[Session.SessionCurrentDateKey] = DateTime.Now.ToString();
+
                 response.Cookies.Add(Session.SessionCookieName, request.Session.Id);
             }
         }

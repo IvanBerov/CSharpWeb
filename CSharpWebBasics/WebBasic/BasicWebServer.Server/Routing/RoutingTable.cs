@@ -18,10 +18,7 @@ namespace BasicWebServer.Server.Routing
             [Method.Delete] = new(),
         };
 
-        public IRoutingTable Map(
-            string url,
-            Method method,
-            Response response)
+        public IRoutingTable Map(string url, Method method, Response response)
             => method switch
             {
                 Method.Get => this.MapGet(url, response),
@@ -29,11 +26,10 @@ namespace BasicWebServer.Server.Routing
                 _ => throw new InvalidOperationException($"Method '{method}' is not supported.")
             };
 
-        public IRoutingTable MapGet(
-            string url,
-            Response response)
+        public IRoutingTable MapGet(string url, Response response)
         {
             Guard.AgainstNull(url, nameof(url));
+
             Guard.AgainstNull(response, nameof(response));
 
             this.routes[Method.Get][url] = response;
@@ -41,11 +37,10 @@ namespace BasicWebServer.Server.Routing
             return this;
         }
 
-        public IRoutingTable MapPost(
-            string url,
-            Response response)
+        public IRoutingTable MapPost(string url, Response response)
         {
             Guard.AgainstNull(url, nameof(url));
+
             Guard.AgainstNull(response, nameof(response));
 
             this.routes[Method.Post][url] = response;
@@ -56,10 +51,10 @@ namespace BasicWebServer.Server.Routing
         public Response MatchRequest(Request request)
         {
             var requestMethod = request.Method;
+
             var requestUrl = request.Url;
 
-            if (!this.routes.ContainsKey(requestMethod)
-                || !this.routes[requestMethod].ContainsKey(requestUrl))
+            if (!this.routes.ContainsKey(requestMethod) || !this.routes[requestMethod].ContainsKey(requestUrl))
             {
                 return new NotFoundResponse();
             }

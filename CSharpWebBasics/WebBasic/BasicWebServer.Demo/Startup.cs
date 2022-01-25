@@ -80,9 +80,7 @@ namespace BasicWebServer.Demo
 
             var responses = await Task.WhenAll(downloads);
 
-            var responsesString = string.Join(
-                Environment.NewLine + new String('-', 100),
-                responses);
+            var responsesString = string.Join(Environment.NewLine + new String('-', 100), responses);
 
             await File.WriteAllTextAsync(fileName, responsesString);
         }
@@ -102,26 +100,30 @@ namespace BasicWebServer.Demo
 
         private static void AddCookiesAction(Request request, Response response)
         {
-            var requestHasCookies = request.Cookies.Any(c => c.Name != Session.SessionCookieName);
+            var requestHasCookies = request.Cookies
+                .Any(c => c.Name != Session.SessionCookieName);
+
             var bodyText = "";
 
             if (requestHasCookies)
             {
                 var cookieText = new StringBuilder();
+
                 cookieText.AppendLine("<h1>Cookies</h1>");
 
-                cookieText
-                    .Append("<table border='1'><tr><th>Name</th><th>Value</th></tr>");
+                cookieText.Append("<table border='1'><tr><th>Name</th><th>Value</th></tr>");
 
                 foreach (var cookie in request.Cookies)
                 {
                     cookieText.Append("<tr>");
-                    cookieText
-                        .Append($"<td>{HttpUtility.HtmlEncode(cookie.Name)}</td>");
-                    cookieText
-                        .Append($"<td>{HttpUtility.HtmlEncode(cookie.Value)}</td>");
+                    
+                    cookieText.Append($"<td>{HttpUtility.HtmlEncode(cookie.Name)}</td>");
+
+                    cookieText.Append($"<td>{HttpUtility.HtmlEncode(cookie.Value)}</td>");
+
                     cookieText.Append("</tr>");
                 }
+
                 cookieText.Append("</table>");
 
                 bodyText = cookieText.ToString();
@@ -151,6 +153,7 @@ namespace BasicWebServer.Demo
             if (sessionExists)
             {
                 var currentDate = request.Session[Session.SessionCurrentDateKey];
+
                 bodyText = $"Stored date: {currentDate}!";
             }
             else
@@ -174,8 +177,8 @@ namespace BasicWebServer.Demo
             if (usernameMatches && passwordMatches)
             {
                 request.Session[Session.SessionUserKey] = "MyUserId";
-                response.Cookies.Add(Session.SessionCookieName,
-                    request.Session.Id);
+
+                response.Cookies.Add(Session.SessionCookieName, request.Session.Id);
 
                 bodyText = "<h3>Logged successfully!</h3>";
             }
