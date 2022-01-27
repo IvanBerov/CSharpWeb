@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Net.Sockets;
@@ -103,6 +104,13 @@ namespace BasicWebServer.Server
         private async Task WriteResponse(NetworkStream networkStream, Response response)
         {
             var resposeBytes = Encoding.UTF8.GetBytes(response.ToString());
+
+            if (response.FileContent != null)
+            {
+                resposeBytes = resposeBytes
+                    .Concat(response.FileContent)
+                    .ToArray();
+            }
 
             await networkStream.WriteAsync(resposeBytes);
         }
