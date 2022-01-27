@@ -30,6 +30,7 @@ namespace BasicWebServer.Server.HTTP
             var startLine = lines.First().Split(" ");
 
             var method = ParseMethod(startLine[0]);
+
             var url = startLine[1];
 
             var headers = ParseHeaders(lines.Skip(1));
