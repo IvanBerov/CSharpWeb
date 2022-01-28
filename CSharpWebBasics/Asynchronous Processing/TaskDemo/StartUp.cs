@@ -1,4 +1,8 @@
-﻿namespace TaskDemo
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace TaskDemo
 {
     public class StartUp
     {
