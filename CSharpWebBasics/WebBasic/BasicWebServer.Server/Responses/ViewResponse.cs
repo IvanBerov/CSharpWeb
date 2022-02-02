@@ -47,7 +47,8 @@ namespace BasicWebServer.Server.Responses
                 const string closingBrackets = "}}";
 
                 viewContent = viewContent
-                    .Replace($"{openingBrackets}{item.Name}{closingBrackets}", item.Value.ToString());
+                    .Replace($"{openingBrackets}{item.Name}{closingBrackets}",
+                        item.Value.ToString());
             }
 
             return viewContent;
