@@ -48,7 +48,6 @@ namespace BasicWebServer.Server.Controllers
             => new ViewResponse(viewName, GetControllerName(), model);
 
         private string GetControllerName()
-            => this.GetType().Name
-                .Replace(nameof(Controller), string.Empty);
+            => this.GetType().Name.Replace(nameof(Controller), string.Empty);
     }
 }
