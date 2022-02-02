@@ -1,8 +1,8 @@
-﻿using BasicWebServer.Demo.Models;
+﻿using System;
+using System.Collections.Generic;
+using BasicWebServer.Demo.Models;
 using BasicWebServer.Server.Controllers;
 using BasicWebServer.Server.HTTP;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -45,7 +45,11 @@ namespace BasicWebServer.Demo.Controllers
 
         public Response DownloadContent()
         {
-            DownloadSitesAsTextFile(HomeController.FileName, new[] { "https://softuni.bg/", "https://judge.softuni.org/" })
+            DownloadSitesAsTextFile
+                 (
+                 HomeController.FileName,
+                 new[] { "https://softuni.bg/", "https://judge.softuni.org/" }
+                 )
                 .Wait();
 
             return File(HomeController.FileName);
@@ -83,7 +87,8 @@ namespace BasicWebServer.Demo.Controllers
 
         public Response Cookies()
         {
-            var requestHasCookies = Request.Cookies
+            var requestHasCookies = Request
+                .Cookies
                 .Any(c => c.Name != Server.HTTP.Session.SessionCookieName);
 
             var bodyText = "";
