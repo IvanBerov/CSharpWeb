@@ -33,7 +33,7 @@ namespace HttpRequester
         {
             const string NewLine = "\r\n";
 
-            using NetworkStream networkStream = tcpClient.GetStream();
+            await using NetworkStream networkStream = tcpClient.GetStream();
 
             byte[] requestBytes = new byte[1_000_000]; // TODO: Use buffer
 
@@ -76,8 +76,8 @@ namespace HttpRequester
                                 ("Set-Cookie: sid=" + newSid + NewLine)
                                 : string.Empty) +
                               // "Location: https://google.com" + NewLine +
-                              // "Content-Disposition: attachment; filename=niki.html" + NewLine +
-                              "Content-Lenght: " + responseText.Length + NewLine +
+                              // "Content-Disposition: attachment; filename=ivan.html" + NewLine +
+                              "Content-Length:" + responseText.Length + NewLine +
                               NewLine +
                               responseText;
 
@@ -86,6 +86,7 @@ namespace HttpRequester
             await networkStream.WriteAsync(responseBytes, 0, responseBytes.Length);
 
             Console.WriteLine(request);
+
             Console.WriteLine(new string('=', 60));
         }
     }
