@@ -46,7 +46,9 @@ namespace BasicWebServer.Server.Routing
                 return new NotFoundResponse();
             }
 
-            return this.routes[requestMethod][requestUrl](request);
+            var responseFunction = this.routes[requestMethod][requestUrl];
+
+            return responseFunction(request);
         }
     }
 }

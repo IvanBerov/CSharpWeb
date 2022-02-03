@@ -118,7 +118,8 @@ namespace BasicWebServer.Demo.Controllers
                         .Append("</tr>");
                 }
 
-                cookieText.Append("</table>");
+                cookieText
+                    .Append("</table>");
 
                 bodyText = cookieText.ToString();
 

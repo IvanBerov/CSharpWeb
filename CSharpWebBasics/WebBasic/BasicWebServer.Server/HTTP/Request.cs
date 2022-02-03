@@ -122,7 +122,8 @@ namespace BasicWebServer.Server.HTTP
 
         private static Session GetSession(CookieCollection cookies)
         {
-            var sessionId = cookies.Contains(Session.SessionCookieName)
+            var sessionId = 
+                cookies.Contains(Session.SessionCookieName)
                 ? cookies[Session.SessionCookieName]
                 : Guid.NewGuid().ToString();
 

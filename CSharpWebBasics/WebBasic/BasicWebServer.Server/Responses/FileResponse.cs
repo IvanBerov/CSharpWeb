@@ -12,7 +12,8 @@ namespace BasicWebServer.Server.Responses
         {
             this.FileName = fileName;
 
-            this.Headers.Add(Header.ContentType, ContentType.FileContent);
+            this.Headers
+                .Add(Header.ContentType, ContentType.FileContent);
         }
 
         public override string ToString()
@@ -25,10 +26,11 @@ namespace BasicWebServer.Server.Responses
 
                 var fileBytesCount = new FileInfo(this.FileName).Length;
 
-                this.Headers.Add(Header.ContentLength, fileBytesCount.ToString());
+                this.Headers
+                    .Add(Header.ContentLength, fileBytesCount.ToString());
 
-                this.Headers.Add(Header.ContentDisposition,
-                    $"attachment; filename=\"{this.FileName}\"");
+                this.Headers
+                    .Add(Header.ContentDisposition, $"attachment; filename=\"{this.FileName}\"");
             }
 
             return base.ToString();
