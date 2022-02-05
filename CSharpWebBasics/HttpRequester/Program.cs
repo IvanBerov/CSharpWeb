@@ -49,7 +49,8 @@ namespace HttpRequester
 
             Console.WriteLine(sid);
 
-            var newSid = Guid.NewGuid().ToString();
+            var newSid = Guid.NewGuid()
+                .ToString();
 
             var count = 0;
 
@@ -72,9 +73,7 @@ namespace HttpRequester
                               "Server: SoftUniServer/1.0" + NewLine +
                               "Content-Type: text/html" + NewLine +
                               "Set-Cookie: user=Ivan; Max-Age: 3600; HttpOnly;" + NewLine +
-                              (string.IsNullOrWhiteSpace(sid) ?
-                                ("Set-Cookie: sid=" + newSid + NewLine)
-                                : string.Empty) +
+                              (string.IsNullOrWhiteSpace(sid) ? ("Set-Cookie: sid=" + newSid + NewLine) : string.Empty) +
                               // "Location: https://google.com" + NewLine +
                               // "Content-Disposition: attachment; filename=ivan.html" + NewLine +
                               "Content-Length:" + responseText.Length + NewLine +

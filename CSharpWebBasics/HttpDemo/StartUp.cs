@@ -4,40 +4,31 @@ using System.Text;
 
 namespace HttpDemo
 {
-
-
-    class StartUp
+    public class StartUp
     {
         static async Task Main(string[] args)
         {
-            // => за четене на кирилица
-            Console.OutputEncoding = Encoding.UTF8;
-            // => създаване на нов ред, независимо от вида на насрещния сървър или клиент
-            const string NewLine = "\r\n";
+            Console.OutputEncoding = Encoding.UTF8; // => за четене на кирилица
+            
+            const string NewLine = "\r\n"; // => създаване на нов ред, независимо от вида на насрещния сървър или клиент
 
-
-            // => избираме на кой порт от нашия сървър да работим и да очакваме клиентска заявка
-            // => активираме очакването на заявка
             TcpListener tcpListener = new TcpListener(IPAddress.Loopback, 80);
-            tcpListener.Start();
+
+            tcpListener.Start(); // => активираме очакването на заявка
 
             while (true)
             {
-                // => изграждаме клиент
-                // => отваряме stream, кпйто клиента да използва  ===> винаги ползваме USING, когато имаме STREAM
-                var client = tcpListener.AcceptTcpClient();
-                var stream = client.GetStream();
+                var client = await tcpListener.AcceptTcpClientAsync(); // => изграждаме клиент
 
-                using (stream)
+                var stream = client.GetStream(); // => отваряме stream, кпйто клиента да използва
+
+                await using (stream)
                 {
-                    // => създаваме масив от bytes, което да бъде цялата получена информация
-                    // => изчисляваме дължината на масива
-                    byte[] buffer = new byte[1024];
+                    byte[] buffer = new byte[1024]; // => масив от bytes, което да бъде цялата получена информация
+
                     var lenght = stream.Read(buffer, 0, buffer.Length);
 
-                    // => превръщаме масива от bytes във четим формат(string)
-                    // => прочитаме изпратената от клиента информация
-                    var requestString = Encoding.UTF8.GetString(buffer, 0, lenght);
+                    var requestString = Encoding.UTF8.GetString(buffer, 0, lenght); // => превръщаме масива от bytes във четим формат
                     Console.WriteLine(requestString);
 
                     // => подготвяме отговор към клиента под формата на четим формат (string)
@@ -46,7 +37,7 @@ namespace HttpDemo
                             $"<input type=submit /></form>";
 
                     string response = "HTTP/1.1 200 OK"
-                        + NewLine + "Server: NikiServer 2020"
+                        + NewLine + "Server: IvanServer 2020"
                         + NewLine +
                         //"Location: https://www.google.com" + NewLine +
                         "Content-Type: text/html; charset=utf-8"
@@ -55,9 +46,10 @@ namespace HttpDemo
                         "Content-Lenght: " + html.Length
                         + NewLine
                         + NewLine + html // => тук добавяме по-горе подготвеният отговор към клиента
-                        + NewLine; // накрая трябва да има нов ред, за да не цикли браузъра
+                        + NewLine; // нов ред, за да не цикли браузъра
 
                     byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+
                     stream.Write(responseBytes);
 
                     Console.WriteLine(new string('=', 70));
@@ -68,11 +60,13 @@ namespace HttpDemo
         public static async Task ReadData()
         {
             string url = "https://softuni.bg/courses/csharp-web-basics";
+
             HttpClient httpClient = new HttpClient();
+
             var response = await httpClient.GetAsync(url);
+
             Console.WriteLine(response.StatusCode);
             Console.WriteLine(string.Join(Environment.NewLine, response.Headers.Select(x => x.Key + ": " + x.Value.First())));
-
             // var html = await httpClient.GetStringAsync(url);
             // Console.WriteLine(html);
         }
