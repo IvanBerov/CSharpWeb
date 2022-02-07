@@ -4,6 +4,7 @@ using System.Net;
 using System.Text;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using BasicWebServer.Server.Common;
 using BasicWebServer.Server.HTTP;
 using BasicWebServer.Server.Routing;
 
@@ -12,11 +13,19 @@ namespace BasicWebServer.Server
     public class HttpServer
     {
         private readonly IPAddress ipAddress;
+
         private readonly int port;
+
         private readonly TcpListener serverListener;
+
         private readonly RoutingTable routingTable;
 
-        public HttpServer(string ipAddress, int port, Action<IRoutingTable> routingTableConfiguration)
+        public readonly IServiceCollection ServiceCollection;
+
+        public HttpServer(
+            string ipAddress,
+            int port,
+            Action<IRoutingTable> routingTableConfiguration)
         {
             this.ipAddress = IPAddress.Parse(ipAddress);
 
@@ -25,6 +34,8 @@ namespace BasicWebServer.Server
             this.serverListener = new TcpListener(this.ipAddress, port);
 
             routingTableConfiguration(this.routingTable = new RoutingTable());
+
+            ServiceCollection = new ServiceCollection();
         }
 
         public HttpServer(int port, Action<IRoutingTable> routingTable)
@@ -56,7 +67,7 @@ namespace BasicWebServer.Server
 
                     Console.WriteLine(requestText);
 
-                    var request = Request.Parse(requestText);
+                    var request = Request.Parse(requestText, ServiceCollection);
 
                     var response = this.routingTable.MatchRequest(request);
 
@@ -81,7 +92,8 @@ namespace BasicWebServer.Server
 
             do
             {
-                var bytesRead = await networkStream.ReadAsync(buffer, 0, bufferLength);
+                var bytesRead = await networkStream
+                    .ReadAsync(buffer, 0, bufferLength);
 
                 totalBytes += bytesRead;
 

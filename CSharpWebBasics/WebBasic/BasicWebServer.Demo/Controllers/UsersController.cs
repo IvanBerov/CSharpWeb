@@ -5,6 +5,8 @@ namespace BasicWebServer.Demo.Controllers
 {
     public class UsersController : Controller
     {
+        private readonly UserService userService;
+
         private const string Username = "user";
 
         private const string Password = "user123";
