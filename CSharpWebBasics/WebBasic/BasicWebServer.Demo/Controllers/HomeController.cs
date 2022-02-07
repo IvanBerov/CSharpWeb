@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using BasicWebServer.Demo.Models;
+﻿using BasicWebServer.Demo.Models;
+using BasicWebServer.Server.Attributes;
 using BasicWebServer.Server.Controllers;
 using BasicWebServer.Server.HTTP;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace BasicWebServer.Demo.Controllers
@@ -20,12 +17,16 @@ namespace BasicWebServer.Demo.Controllers
         {
         }
 
+        [HttpGet]
         public Response Index() => Text("Hello from the server!");
+
+        public Response Student(string name, int age) => Text($"I'm {name} and I'm {age} years old");
 
         public Response Redirect() => Redirect("https://softuni.bg");
 
         public Response Html() => View();
 
+        [HttpPost]
         public Response HtmlFormPost()
         {
             string name = Request.Form["Name"];
@@ -43,47 +44,50 @@ namespace BasicWebServer.Demo.Controllers
 
         public Response Content() => View();
 
-        public Response DownloadContent()
-        {
-            DownloadSitesAsTextFile
-                 (
-                 HomeController.FileName,
-                 new[] { "https://softuni.bg/", "https://judge.softuni.org/" }
-                 )
-                .Wait();
+        //public Response DownloadContent()
+        //{
+        //    DownloadSitesAsTextFile
+        //         (
+        //         HomeController.FileName,
+        //         new[] { "https://softuni.bg/", "https://judge.softuni.org/" }
+        //         )
+        //        .Wait();
 
-            return File(HomeController.FileName);
-        }
+        //    return File(HomeController.FileName);
+        //}
 
-        private static async Task DownloadSitesAsTextFile(string fileName, string[] urls)
-        {
-            var downloads = new List<Task<string>>();
+        public Response DownloadContent() => File(FileName);
 
-            foreach (var url in urls)
-            {
-                downloads.Add(DownloadWebSiteContentAsync(url));
-            }
 
-            var responses = await Task.WhenAll(downloads);
+        //private static async Task DownloadSitesAsTextFile(string fileName, string[] urls)
+        //{
+        //    var downloads = new List<Task<string>>();
 
-            var responsesString = string.Join(Environment.NewLine + new string('-', 100), responses);
+        //    foreach (var url in urls)
+        //    {
+        //        downloads.Add(DownloadWebSiteContentAsync(url));
+        //    }
 
-            await System.IO.File.WriteAllTextAsync(fileName, responsesString);
-        }
+        //    var responses = await Task.WhenAll(downloads);
 
-        private static async Task<string> DownloadWebSiteContentAsync(string url)
-        {
-            var httpClient = new HttpClient();
+        //    var responsesString = string.Join(Environment.NewLine + new string('-', 100), responses);
 
-            using (httpClient)
-            {
-                var response = await httpClient.GetAsync(url);
+        //    await System.IO.File.WriteAllTextAsync(fileName, responsesString);
+        //}
 
-                var html = await response.Content.ReadAsStringAsync();
+        //private static async Task<string> DownloadWebSiteContentAsync(string url)
+        //{
+        //    var httpClient = new HttpClient();
 
-                return html.Substring(0, 2000);
-            }
-        }
+        //    using (httpClient)
+        //    {
+        //        var response = await httpClient.GetAsync(url);
+
+        //        var html = await response.Content.ReadAsStringAsync();
+
+        //        return html.Substring(0, 2000);
+        //    }
+        //}
 
         public Response Cookies()
         {

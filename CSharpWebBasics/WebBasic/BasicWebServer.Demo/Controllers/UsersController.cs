@@ -1,4 +1,7 @@
-﻿using BasicWebServer.Server.Controllers;
+﻿using System;
+using BasicWebServer.Demo.Services;
+using BasicWebServer.Server.Attributes;
+using BasicWebServer.Server.Controllers;
 using BasicWebServer.Server.HTTP;
 
 namespace BasicWebServer.Demo.Controllers
@@ -7,28 +10,26 @@ namespace BasicWebServer.Demo.Controllers
     {
         private readonly UserService userService;
 
-        private const string Username = "user";
-
-        private const string Password = "user123";
-
-        public UsersController(Request request)
+        public UsersController(Request request, UserService _userService)
             : base(request)
         {
+            userService = _userService;
         }
 
+        [HttpPost]
         public Response LoginUser()
         {
             Request.Session.Clear();
 
             var bodyText = "";
 
-            var usernameMatches = Request.Form["Username"] == Username;
+            var username = Request.Form["Username"];
 
-            var passwordMatches = Request.Form["Password"] == Password;
+            var password = Request.Form["Password"];
 
-            if (usernameMatches && passwordMatches)
+            if (userService.IsLoginCorrect(username, password))
             {
-                Request.Session[Session.SessionUserKey] = "MyUserId";
+                SignIn(Guid.NewGuid().ToString());
 
                 CookieCollection cookies = new CookieCollection();
 
@@ -42,19 +43,15 @@ namespace BasicWebServer.Demo.Controllers
             return Redirect("/Login");
         }
 
+        [Authorize]
         public Response GetUserData()
         {
-            if (Request.Session.ContainsKey(Session.SessionUserKey))
-            {
-                return Html($"<h3>Currently logged-in user is with username '{Username}'</h3>");
-            }
-
-            return Redirect("/Login");
+            return Html($"<h3>Currently logged-in user is with id '{User.Id}'</h3>");
         }
 
         public Response Logout()
         {
-            Request.Session.Clear();
+            SignOut();
 
             return Html("<h3>Logged out successfully!</h3>");
         }
