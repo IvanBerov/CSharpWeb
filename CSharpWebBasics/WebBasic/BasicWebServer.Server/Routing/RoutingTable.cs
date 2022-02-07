@@ -18,10 +18,12 @@ namespace BasicWebServer.Server.Routing
             [Method.Delete] = new(StringComparer.InvariantCultureIgnoreCase)
         };
 
-        public IRoutingTable Map(Method method, string path, Func<Request, Response> responseFunction)
+        public IRoutingTable Map(Method method, string path, Func<Request, Response> responseFunction) //?
         {
                 Guard.AgainstNull(path, nameof(path));
                 Guard.AgainstNull(responseFunction, nameof(responseFunction));
+                Guard.AgainstDuplicatedKey(routes[Method.Get], path, "RoutingTable.Get");
+                Guard.AgainstDuplicatedKey(routes[Method.Post], path, "RoutingTable.Post");
 
                 this.routes[method][path] = responseFunction;
 
