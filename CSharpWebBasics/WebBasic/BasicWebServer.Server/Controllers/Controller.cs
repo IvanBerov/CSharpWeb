@@ -1,17 +1,47 @@
 ﻿using System.Runtime.CompilerServices;
 using BasicWebServer.Server.HTTP;
+using BasicWebServer.Server.Identity;
 using BasicWebServer.Server.Responses;
 
 namespace BasicWebServer.Server.Controllers
 {
     public class Controller
     {
+        private UserIdentity userIdentity;
+
+        protected Request Request { get; set; }
+
         public Controller(Request request)
         {
             this.Request = request;
         }
 
-        protected Request Request { get; private init; }
+        protected UserIdentity User
+        {
+            get
+            {
+                if (userIdentity == null)
+                {
+                    this.userIdentity = this.Request.Session.ContainsKey(Session.SessionUserKey)
+                        ? new UserIdentity { Id = this.Request.Session[Session.SessionUserKey] }
+                        : new();
+                }
+
+                return userIdentity;
+            }
+        }
+
+        protected void SignIn(string userId)
+        {
+            Request.Session[Session.SessionUserKey] = userId;
+            userIdentity = new UserIdentity { Id = userId };
+        }
+
+        protected void SignOut()
+        {
+            Request.Session.Clear();
+            userIdentity = new();
+        }
 
         protected Response Text(string text) => new TextResponse(text);
 
@@ -48,6 +78,8 @@ namespace BasicWebServer.Server.Controllers
             => new ViewResponse(viewName, GetControllerName(), model);
 
         private string GetControllerName()
-            => this.GetType().Name.Replace(nameof(Controller), string.Empty);
+            => this.GetType()
+                .Name
+                .Replace(nameof(Controller), string.Empty);
     }
 }
