@@ -1,4 +1,7 @@
-﻿namespace SharedTrip
+﻿using Microsoft.EntityFrameworkCore;
+using SharedTrip.Data;
+
+namespace SharedTrip
 {
     using System.Threading.Tasks;
 
@@ -16,7 +19,10 @@
                     .MapStaticFiles()
                     .MapControllers())
                 .WithServices(services => services
-                    .Add<IViewEngine, CompilationViewEngine>())
+                    .Add<IViewEngine, CompilationViewEngine>()
+                    .Add<ApplicationDbContext>())
+                .WithConfiguration<ApplicationDbContext>(context => context
+                    .Database.Migrate())
                 .Start();
     }
 }

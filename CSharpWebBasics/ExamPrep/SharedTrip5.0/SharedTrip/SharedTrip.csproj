@@ -97,4 +97,9 @@
     <ProjectReference Include="..\MyWebServer\MyWebServer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Migration\" />
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
 </Project>
