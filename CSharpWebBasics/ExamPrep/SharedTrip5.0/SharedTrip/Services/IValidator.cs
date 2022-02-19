@@ -8,5 +8,7 @@ namespace SharedTrip.Services
         ICollection<string> IsValidRegister(UserRegisterForm model);
 
         ICollection<string> IsValidLogin(bool isUserInDatabase);
+
+        ICollection<string> IsValidTripFormModel(TripsAddFormModel model);
     }
 }

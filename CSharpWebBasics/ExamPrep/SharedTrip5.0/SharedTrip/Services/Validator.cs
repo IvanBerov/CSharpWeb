@@ -48,5 +48,37 @@ namespace SharedTrip.Services
 
             return errors;
         }
+
+        public ICollection<string> IsValidTripFormModel(TripsAddFormModel model)
+        {
+            var errors = new List<string>();
+
+            if (model.Seats < MinSeatsCount || model.Seats > MaxSeatsCount)
+            {
+                errors.Add($"Seats must be between {MinSeatsCount} and {MaxSeatsCount}");
+            }
+
+            if (model.Description.Length > MaxDescriptionLength)
+            {
+                errors.Add($"Max description length is {MaxDescriptionLength}");
+            }
+
+            if (model.StartPoint == null)
+            {
+                errors.Add($"StartPoint is required");
+            }
+
+            if (model.EndPoint == null)
+            {
+                errors.Add($"EndPoint is required");
+            }
+
+            if (model.ImagePath == null)
+            {
+                errors.Add($"Image is required");
+            }
+
+            return errors;
+        }
     }
 }
