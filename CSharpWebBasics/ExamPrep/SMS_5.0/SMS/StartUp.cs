@@ -8,7 +8,6 @@
     using SMS.Data;
     using SMS.Services;
 
-
     public class StartUp
     {
         public static async Task Main()
