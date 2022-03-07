@@ -56,6 +56,34 @@ namespace FootballManager.Controllers
         }
 
         [Authorize]
+        public HttpResponse AddToCollection(int playerId)
+        {
+            var player = data.Players.FirstOrDefault(x => x.Id == playerId);
+
+            if (player == null)
+            {
+                return this.Redirect("Players/All");
+            }
+
+            if (this.data.UserPlayers.Any(p => p.UserId == User.Id && p.PlayerId == playerId))
+            {
+                return this.Error("You already have that player in your collection. Please choose another one.");
+            }
+
+            var playerToAdd = new UserPlayer
+            {
+                UserId = User.Id,
+                PlayerId = playerId
+            };
+
+            this.data.UserPlayers.Add(playerToAdd);
+
+            this.data.SaveChanges();
+
+            return Redirect("Players/All");
+        }
+
+        [Authorize]
         public HttpResponse All()
         {
             var allPlayers = data.Players
@@ -70,6 +98,25 @@ namespace FootballManager.Controllers
                 }).ToList();
 
             return this.View(allPlayers);
+        }
+
+        [Authorize]
+        public HttpResponse Collection()
+        {
+            var collection = this.data.UserPlayers
+                .Where(x => x.UserId == User.Id)
+                .Select(x => new PlayersCollectionModel
+                {
+                    Id = x.Player.Id,
+                    FullName = x.Player.FullName,
+                    ImageUrl = x.Player.ImageUrl,
+                    Position = x.Player.Position,
+                    Speed = x.Player.Speed,
+                    Endurance = x.Player.Endurance,
+                    Description = x.Player.Description,
+                }).ToList();
+
+            return this.View(collection);
         }
 
         [Authorize]
