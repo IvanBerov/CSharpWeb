@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace FootballManager.Data.Migration
+namespace FootballManager.Data.Migrations
 {
-    public partial class UserPlayerCreateTable : Microsoft.EntityFrameworkCore.Migrations.Migration
+    public partial class UserPlayersTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -10,7 +10,7 @@ namespace FootballManager.Data.Migration
                 name: "Players",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", maxLength: 36, nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FullName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),

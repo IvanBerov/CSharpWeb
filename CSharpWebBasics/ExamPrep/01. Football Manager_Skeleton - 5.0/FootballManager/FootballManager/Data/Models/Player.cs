@@ -9,8 +9,7 @@ namespace FootballManager.Data.Models
     public class Player
     {
         [Key]
-        [StringLength(36)]
-        public int Id { get; set; } = Guid.NewGuid().GetHashCode();
+        public int Id { get; set; } 
 
         [Required]
         [MaxLength(MaxPlayerFullName)]

@@ -22,6 +22,42 @@ namespace FootballManager.Controllers
         }
 
         [Authorize]
+        public HttpResponse All()
+        {
+            var allPlayers = data.Players
+                .Select(p => new PlayersAddAllFormModel()
+                {
+                    ImageUrl = p.ImageUrl,
+                    Description = p.Description,
+                    FullName = p.FullName,
+                    Position = p.Position,
+                    Speed = p.Speed,
+                    Endurance = p.Endurance
+                }).ToList();
+
+            return this.View(allPlayers);
+        }
+
+        [Authorize]
+        public HttpResponse Collection()
+        {
+            var collection = this.data.UserPlayers
+                .Where(x => x.UserId == User.Id)
+                .Select(x => new PlayersCollectionModel
+                {
+                    Id = x.Player.Id,
+                    FullName = x.Player.FullName,
+                    ImageUrl = x.Player.ImageUrl,
+                    Position = x.Player.Position,
+                    Speed = x.Player.Speed,
+                    Endurance = x.Player.Endurance,
+                    Description = x.Player.Description,
+                }).ToList();
+
+            return this.View(collection);
+        }
+
+        [Authorize]
         public HttpResponse Add()
         {
             return this.View();
@@ -83,41 +119,7 @@ namespace FootballManager.Controllers
             return Redirect("Players/All");
         }
 
-        [Authorize]
-        public HttpResponse All()
-        {
-            var allPlayers = data.Players
-                .Select(p => new PlayersAddAllFormModel()
-                {
-                   ImageUrl = p.ImageUrl,
-                   Description = p.Description,
-                   FullName = p.FullName,
-                   Position = p.Position,
-                   Speed = p.Speed,
-                   Endurance = p.Endurance
-                }).ToList();
-
-            return this.View(allPlayers);
-        }
-
-        [Authorize]
-        public HttpResponse Collection()
-        {
-            var collection = this.data.UserPlayers
-                .Where(x => x.UserId == User.Id)
-                .Select(x => new PlayersCollectionModel
-                {
-                    Id = x.Player.Id,
-                    FullName = x.Player.FullName,
-                    ImageUrl = x.Player.ImageUrl,
-                    Position = x.Player.Position,
-                    Speed = x.Player.Speed,
-                    Endurance = x.Player.Endurance,
-                    Description = x.Player.Description,
-                }).ToList();
-
-            return this.View(collection);
-        }
+       
 
         [Authorize]
         public HttpResponse AddPlayerToUser(int playerId)
