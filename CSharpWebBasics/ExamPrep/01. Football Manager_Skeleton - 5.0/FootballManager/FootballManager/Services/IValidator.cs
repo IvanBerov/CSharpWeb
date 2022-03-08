@@ -10,6 +10,6 @@ namespace FootballManager.Services
 
         ICollection<string> IsValidLogin(bool isUserInDatabase);
 
-        ICollection<string> IsValidPlayerFormModel(PlayersAddAllFormModel model);
+        ICollection<string> IsValidPlayerFormModel(AddPlayerModel model);
     }
 }

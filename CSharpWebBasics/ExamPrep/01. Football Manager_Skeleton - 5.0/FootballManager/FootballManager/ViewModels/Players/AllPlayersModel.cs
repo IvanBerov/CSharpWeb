@@ -1,7 +1,9 @@
 ﻿namespace FootballManager.ViewModels.Players
 {
-    public class PlayersAddAllFormModel
+    public class AllPlayersModel
     {
+        public int Id { get; init; }
+
         public string FullName { get; set; }
 
         public string ImageUrl { get; set; }

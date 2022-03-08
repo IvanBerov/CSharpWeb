@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FootballManager.Data;
+﻿using FootballManager.Data;
 using FootballManager.Data.Models;
 using FootballManager.Services;
 using FootballManager.ViewModels.Players;
 using MyWebServer.Controllers;
 using MyWebServer.Http;
+using System.Linq;
 
 namespace FootballManager.Controllers
 {
@@ -25,14 +24,15 @@ namespace FootballManager.Controllers
         public HttpResponse All()
         {
             var allPlayers = data.Players
-                .Select(p => new PlayersAddAllFormModel()
+                .Select(p => new AllPlayersModel()
                 {
-                    ImageUrl = p.ImageUrl,
-                    Description = p.Description,
+                    Id = p.Id,
                     FullName = p.FullName,
+                    ImageUrl = p.ImageUrl,
                     Position = p.Position,
                     Speed = p.Speed,
-                    Endurance = p.Endurance
+                    Endurance = p.Endurance,
+                    Description = p.Description,
                 }).ToList();
 
             return this.View(allPlayers);
@@ -60,12 +60,17 @@ namespace FootballManager.Controllers
         [Authorize]
         public HttpResponse Add()
         {
+            if (!User.IsAuthenticated)
+            {
+                return this.Redirect("/Users/Register");
+            }
+
             return this.View();
         }
 
-        [Authorize]
         [HttpPost]
-        public HttpResponse Add(PlayersAddAllFormModel model)
+        [Authorize]
+        public HttpResponse Add(AddPlayerModel model)
         {
             var errors = validator.IsValidPlayerFormModel(model);
 
@@ -78,10 +83,10 @@ namespace FootballManager.Controllers
             {
                 FullName = model.FullName,
                 ImageUrl = model.ImageUrl,
-                Description = model.Description,
                 Position = model.Position,
                 Speed = model.Speed,
-                Endurance = model.Endurance
+                Endurance = model.Endurance,
+                Description = model.Description
             };
 
             data.Players.Add(player);
@@ -119,52 +124,24 @@ namespace FootballManager.Controllers
             return Redirect("Players/All");
         }
 
-       
-
-        [Authorize]
-        public HttpResponse AddPlayerToUser(int playerId)
+        public HttpResponse RemoveFromCollection(int playerId)
         {
-            var errors = new List<string>();
+            var player = this.data.Players.Find(playerId);
 
-            var currentPlayer = data.Players
-                .Any(p => p.Id == playerId);
-
-            if (!currentPlayer)
+            if (player == null)
             {
-                errors.Add("Player does not exist!");
-
-                return View("Error", errors);
+                return this.Redirect("/Players/Collection");
             }
 
-            var userPlayer = new UserPlayer()
-            {
-                PlayerId = playerId,
-                UserId = this.User.Id
-            };
+            var removePlayer = this.data.UserPlayers
+                .FirstOrDefault(x => x.UserId == User.Id && x.PlayerId == playerId);
 
-            if (data.UserPlayers.Any(ut => ut.UserId == this.User.Id && ut.PlayerId == playerId))
+            if (removePlayer == null)
             {
-                errors.Add("Player already exist!");
-
-                return View("/Error", errors);
+                return this.Redirect("/Players/All");
             }
 
-            data.UserPlayers.Add(userPlayer);
-
-            data.SaveChanges();
-
-            //return Redirect("/"); //?
-
-            return Redirect("/Players/Collection");
-        }
-
-        public HttpResponse RemoveFromCollection(int id)
-        {
-            var player = this.data.Players
-                .FirstOrDefault(c => c.Id == id);
-
-            this.data.Players.Remove(player);
-
+            this.data.UserPlayers.Remove(removePlayer);
             this.data.SaveChanges();
 
             return this.Redirect("/Players/Collection");

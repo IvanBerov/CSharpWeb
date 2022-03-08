@@ -50,7 +50,7 @@ namespace FootballManager.Services
             return errors;
         }
 
-        public ICollection<string> IsValidPlayerFormModel(PlayersAddAllFormModel model)
+        public ICollection<string> IsValidPlayerFormModel(AddPlayerModel model)
         {
             var errors = new List<string>();
 

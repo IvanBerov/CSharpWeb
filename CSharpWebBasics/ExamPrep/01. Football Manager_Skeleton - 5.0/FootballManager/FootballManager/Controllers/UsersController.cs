@@ -23,7 +23,20 @@ namespace FootballManager.Controllers
             this.data = _data;
         }
 
-        public HttpResponse Register() => this.View();
+        public HttpResponse Index()
+        {
+            return this.View();
+        }
+
+        public HttpResponse Register()
+        {
+            if (User.IsAuthenticated)
+            {
+                return Redirect("/Players/All");
+            }
+
+            return this.View();
+        }
 
         [HttpPost]
         public HttpResponse Register(UserRegisterForm model)
@@ -58,7 +71,15 @@ namespace FootballManager.Controllers
             return Redirect("/Users/Login");
         }
 
-        public HttpResponse Login() => this.View();
+        public HttpResponse Login()
+        {
+            if (User.IsAuthenticated)
+            {
+                return Redirect("/Players/All");
+            }
+
+            return this.View();
+        }
 
         [HttpPost]
         public HttpResponse Login(UserLoginForm model)
@@ -83,9 +104,14 @@ namespace FootballManager.Controllers
 
         public HttpResponse LogOut()
         {
-            this.SignOut();
+            if (User.IsAuthenticated)
+            {
+                this.SignOut();
 
-            return Redirect("/");
+                return Redirect("/");
+            }
+
+            return this.Redirect("/Users/Register");
         }
     }
 }
