@@ -23,7 +23,8 @@ namespace FootballManager.Controllers
         [Authorize]
         public HttpResponse All()
         {
-            var allPlayers = data.Players
+            var allPlayers = data
+                .Players
                 .Select(p => new AllPlayersModel()
                 {
                     Id = p.Id,
@@ -65,7 +66,7 @@ namespace FootballManager.Controllers
                 return this.Redirect("/Users/Register");
             }
 
-            return this.View();
+            return View();
         }
 
         [HttpPost]
@@ -93,35 +94,43 @@ namespace FootballManager.Controllers
 
             data.SaveChanges();
 
-            return this.Redirect("/Players/All");
+            return Redirect("/Players/All");
         }
 
         [Authorize]
         public HttpResponse AddToCollection(int playerId)
         {
-            var player = data.Players.FirstOrDefault(x => x.Id == playerId);
+            var user = data
+                .Users
+                .FirstOrDefault(u => u.Id == this.User.Id);
 
-            if (player == null)
+            var player = data
+                .Players
+                .FirstOrDefault(p => p.Id == playerId);
+
+            if (user == null || player == null)
             {
-                return this.Redirect("Players/All");
+                return NotFound();
             }
 
-            if (this.data.UserPlayers.Any(p => p.UserId == User.Id && p.PlayerId == playerId))
+            if (this.data.UserPlayers.Any(p => p.PlayerId == playerId && p.UserId == this.User.Id))
             {
-                return this.Error("You already have that player in your collection. Please choose another one.");
+                return Error($"The player {player.FullName} is already added to the collection.");
             }
 
-            var playerToAdd = new UserPlayer
+            UserPlayer userPlayer = new UserPlayer()
             {
-                UserId = User.Id,
-                PlayerId = playerId
+                PlayerId = playerId,
+                UserId = this.User.Id,
+                User = user,
+                Player = player
             };
 
-            this.data.UserPlayers.Add(playerToAdd);
+            user.UserPlayers.Add(userPlayer);
 
-            this.data.SaveChanges();
+            data.SaveChanges();
 
-            return Redirect("Players/All");
+            return Redirect("/Players/All");
         }
 
         public HttpResponse RemoveFromCollection(int playerId)

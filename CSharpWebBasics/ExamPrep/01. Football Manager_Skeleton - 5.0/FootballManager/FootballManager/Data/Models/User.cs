@@ -22,7 +22,7 @@ namespace FootballManager.Data.Models
         [Required]
         public string Password { get; set; }
 
-        public IEnumerable<UserPlayer> UserPlayers { get; set; } = new List<UserPlayer>();
+        public ICollection<UserPlayer> UserPlayers { get; set; } = new List<UserPlayer>();
     }
     //Has an Id – a string, Primary Key
     //Has a Username – a string with min length 5 and max length 20 (required)
