@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace SharedTrip.ViewModels
 {
@@ -8,12 +9,15 @@ namespace SharedTrip.ViewModels
 
         public string EndPoint { get; set; }
 
-        public DateTime DepartureTime { get; set; }
+        public string DepartureTime { get; set; }
 
         public string ImagePath { get; set; }
 
+        [Range(2, 7)]
         public int Seats { get; set; }
 
+
+        [StringLength(80, ErrorMessage = "Description must be less 80 characters")]
         public string Description { get; set; }
     }
 }

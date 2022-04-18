@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using MyWebServer.Controllers;
 using MyWebServer.Http;
@@ -24,7 +26,7 @@ namespace SharedTrip.Controllers
         [Authorize]
         public HttpResponse Add()
         {
-            return this.View();
+            return View();
         }
 
         [Authorize]
@@ -42,11 +44,21 @@ namespace SharedTrip.Controllers
             {
                 StartPoint = model.StartPoint,
                 EndPoint = model.EndPoint,
-                DepartureTime = model.DepartureTime,
                 Description = model.Description,
                 Seats = model.Seats,
                 ImagePath = model.ImagePath
             };
+
+            DateTime date;
+
+            DateTime.TryParseExact(
+                model.DepartureTime,
+                "dd.MM.yyyy HH:mm",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out date);
+
+            trip.DepartureTime = date;
 
             data.Trips.Add(trip);
 
